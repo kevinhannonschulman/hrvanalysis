@@ -1,0 +1,9 @@
+version: 2
+
+sources:
+  - name: dbt_hrvanalysis
+    database: hrv-analysis
+    schema: dbt_hrvanalysis
+    tables:
+      - name: HRV_SDNN
+      - name: Strava_Data
