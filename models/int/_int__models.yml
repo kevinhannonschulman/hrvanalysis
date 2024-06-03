@@ -1,0 +1,24 @@
+version: 2
+
+models:
+  - name: int_strava_apple_join
+    description: intermediate model joining the HRV_SDNN and Strava_Data staging tables
+    columns:
+      - name: workout_date
+        tests:
+          - dbt_expectations.expect_column_values_to_be_of_type:
+              column_type: date
+      - name: miles
+        tests:
+          - not_null
+      - name: minutes
+        tests:
+          - not_null
+      - name: elev_gain_ft
+        tests:
+          - not_null
+      - name: daily_avg_hrv
+        tests:
+          - dbt_utils.accepted_range:
+              min_value: 0
+              max_value: 150

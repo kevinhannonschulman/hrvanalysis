@@ -30,8 +30,11 @@ models:
           - not_null
       - name: average_heartrate
         tests:
-          - not_null
+          - dbt_utils.accepted_range:
+              min_value: 100
+              max_value: 200
       - name: max_heartrate
         tests:
-          - not_null
+          - dbt_utils.accepted_range:
+              max_value: 220
           

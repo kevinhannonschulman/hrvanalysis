@@ -1,0 +1,87 @@
+version: 2
+
+models:
+  - name: fct_hrv_consecutive
+    description: Model to analyze effect of consecutive running days on heart rate variability
+    columns:
+      - name: year
+        tests:
+          - not_null
+      - name: consecutive_days
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              min_value: 1
+              max_value: 7
+      - name: min_hrv_interval
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              min_value: 0
+              max_value: 150
+      - name: max_hrv_interval
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              min_value: 0
+              max_value: 150
+      - name: avg_hrv_interval
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              min_value: 0
+              max_value: 150
+  - name: fct_hrv_elevation
+    description: Model to analyze effect of elevation gain during a run on heart rate variability
+    columns:
+      - name: year
+        tests:
+          - not_null
+      - name: elev_gain_range
+        tests:
+          - not_null
+      - name: min_elev_hrv
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              min_value: 0
+              max_value: 150
+      - name: max_elev_hrv
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              min_value: 0
+              max_value: 150
+      - name: avg_elev_hrv
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              min_value: 0
+              max_value: 150
+  - name: fct_hrv_mileage
+    description: Model to analyze effect of weekly running mileage on heart rate variability
+    columns:
+      - name: year
+        tests:
+          - not_null
+      - name: mileage_range
+        tests:
+          - not_null
+      - name: min_mileagerange_hrv
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              min_value: 0
+              max_value: 150
+      - name: max_mileagerange_hrv
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              min_value: 0
+              max_value: 150
+      - name: avg_mileagerange_hrv
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              min_value: 0
+              max_value: 150
