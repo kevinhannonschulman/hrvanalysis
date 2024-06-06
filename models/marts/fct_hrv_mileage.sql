@@ -17,8 +17,9 @@ with tablejoin as (
         , start_week
         , sum(miles) over (partition by start_week) as total_mileage
         , daily_avg_hrv
+        , last_value(daily_avg_hrv) over (partition by start_week order by workout_date asc rows between unbounded preceding and unbounded following) as last_daily_avg_hrv
     from weeks
-    order by start_week desc
+    order by workout_date desc, start_week desc
 )
 
 , ranges as (
@@ -26,11 +27,13 @@ with tablejoin as (
         start_week
         , total_mileage
         , case
-            when total_mileage between 10 and 20 then 1
-            when total_mileage between 20 and 30 then 2
-            when total_mileage between 30 and 40 then 3
-            when total_mileage > 40 then 4 end as mileage_range
+            when total_mileage < 10 then 1
+            when total_mileage between 10 and 20 then 2
+            when total_mileage between 20 and 30 then 3
+            when total_mileage between 30 and 40 then 4
+            when total_mileage > 40 then 5 end as mileage_range
         , daily_avg_hrv
+        , last_daily_avg_hrv
    from weekly_mileage
 )
 
@@ -38,10 +41,10 @@ with tablejoin as (
     select
         distinct extract(year from start_week) as year
         , mileage_range
-        , min(daily_avg_hrv) over (partition by extract(year from start_week), mileage_range) as min_mileagerange_hrv
-        , max(daily_avg_hrv) over (partition by extract(year from start_week), mileage_range) as max_mileagerange_hrv
-        , avg(daily_avg_hrv) over (partition by extract(year from start_week), mileage_range) as avg_mileagerange_hrv
-        , count(daily_avg_hrv) over (partition by extract(year from start_week), mileage_range) as num_runs
+        , min(last_daily_avg_hrv) over (partition by extract(year from start_week), mileage_range) as min_last_daily_avg_hrv
+        , max(last_daily_avg_hrv) over (partition by extract(year from start_week), mileage_range) as max_last_daily_avg_hrv
+        , avg(last_daily_avg_hrv) over (partition by extract(year from start_week), mileage_range) as avg_last_daily_avg_hrv
+        , count(daily_avg_hrv) over (partition by extract(year from start_week), mileage_range) as num_runs_in_range
     from ranges
     where daily_avg_hrv is not null
     order by year asc, mileage_range asc

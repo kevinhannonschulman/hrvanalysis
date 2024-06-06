@@ -8,7 +8,7 @@ with hrv_sdnn as (
 
 , final as (
     select
-        distinct strava.workout_date
+        distinct strava.workout_date as workout_date
         , strava.miles
         , strava.minutes
         , strava.elevation_gain_ft as elev_gain_ft

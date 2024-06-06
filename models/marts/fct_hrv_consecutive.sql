@@ -5,7 +5,6 @@ with tablejoin as (
 , datecount as (
     select
         workout_date
-        , daily_avg_hrv
         , dense_rank () over (order by workout_date) as rnk
     from tablejoin
     order by rnk asc
@@ -15,7 +14,6 @@ with tablejoin as (
     select
         workout_date
         , (date(workout_date) - (interval 1 day) * rnk) as date_group
-        , daily_avg_hrv
     from datecount
 )
 
@@ -24,22 +22,39 @@ with tablejoin as (
         min(workout_date) as interval_start
         , max(workout_date) as interval_end
         , 1 + date_diff(max(workout_date), min(workout_date), day) as consecutive_days
-        , avg(daily_avg_hrv) as interval_avg_hrv
     from dategroups
     group by date_group
     order by interval_start desc
 )
 
+, hrv_values as (
+    select
+        workout_date
+        , daily_avg_hrv
+    from tablejoin
+)
+
+, hrv_consecutive_join as (
+    select
+        hrv_values.workout_date
+        , hrv_values.daily_avg_hrv as last_daily_avg_hrv
+        , consecutive.interval_start
+        , consecutive.interval_end
+        , consecutive.consecutive_days
+    from hrv_values
+    inner join consecutive on hrv_values.workout_date = consecutive.interval_end
+    order by workout_date desc
+)
+
 , final as (
     select
-        distinct extract (year from interval_end) as year
+        distinct extract(year from interval_end) as year
         , consecutive_days
-        , min(interval_avg_hrv) over (partition by extract(year from interval_end), consecutive_days) as min_hrv_interval
-        , max(interval_avg_hrv) over (partition by extract(year from interval_end), consecutive_days) as max_hrv_interval
-        , avg(interval_avg_hrv) over (partition by extract(year from interval_end), consecutive_days) as avg_hrv_interval
-        , count(interval_avg_hrv) over (partition by extract(year from interval_end), consecutive_days) as num_runs
-    from consecutive
-    where interval_avg_hrv is not null
+        , min(last_daily_avg_hrv) over (partition by extract(year from interval_end), consecutive_days) as min_last_daily_avg_hrv
+        , max(last_daily_avg_hrv) over (partition by extract(year from interval_end), consecutive_days) as max_last_daily_avg_hrv
+        , avg(last_daily_avg_hrv) over (partition by extract(year from interval_end), consecutive_days) as avg_last_daily_avg_hrv
+        , count(*) over (partition by extract(year from workout_date), consecutive_days) as num_interval_count
+    from hrv_consecutive_join
     order by year asc, consecutive_days asc
 )
 
