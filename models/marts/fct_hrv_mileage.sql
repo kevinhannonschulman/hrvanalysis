@@ -41,6 +41,7 @@ with tablejoin as (
         , min(daily_avg_hrv) over (partition by extract(year from start_week), mileage_range) as min_mileagerange_hrv
         , max(daily_avg_hrv) over (partition by extract(year from start_week), mileage_range) as max_mileagerange_hrv
         , avg(daily_avg_hrv) over (partition by extract(year from start_week), mileage_range) as avg_mileagerange_hrv
+        , count(daily_avg_hrv) over (partition by extract(year from start_week), mileage_range) as num_runs
     from ranges
     where daily_avg_hrv is not null
     order by year asc, mileage_range asc

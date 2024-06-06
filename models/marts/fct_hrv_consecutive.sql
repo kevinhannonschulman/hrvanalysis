@@ -37,6 +37,7 @@ with tablejoin as (
         , min(interval_avg_hrv) over (partition by extract(year from interval_end), consecutive_days) as min_hrv_interval
         , max(interval_avg_hrv) over (partition by extract(year from interval_end), consecutive_days) as max_hrv_interval
         , avg(interval_avg_hrv) over (partition by extract(year from interval_end), consecutive_days) as avg_hrv_interval
+        , count(interval_avg_hrv) over (partition by extract(year from interval_end), consecutive_days) as num_runs
     from consecutive
     where interval_avg_hrv is not null
     order by year asc, consecutive_days asc

@@ -14,8 +14,8 @@ with hrv_sdnn as (
         , strava.elevation_gain_ft as elev_gain_ft
         , hrv_sdnn.daily_avg_hrv as daily_avg_hrv
     from strava
-    left join hrv_sdnn on date(strava.workout_start_eastern) = date(hrv_sdnn.timestamp_eastern)
-    order by workout_date desc
+    inner join hrv_sdnn on date(strava.workout_start_eastern) = date(hrv_sdnn.timestamp_eastern)
+    order by workout_date asc
 )
 
 select * from final
