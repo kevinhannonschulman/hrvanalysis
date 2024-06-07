@@ -22,13 +22,13 @@ with tablejoin as (
     select
         distinct extract(year from workout_date) as year
         , elev_gain_range
-        , min(daily_avg_hrv) over (partition by extract(year from workout_date), elev_gain_range) as min_elev_hrv
-        , max(daily_avg_hrv) over (partition by extract(year from workout_date), elev_gain_range) as max_elev_hrv
-        , avg(daily_avg_hrv) over (partition by extract(year from workout_date), elev_gain_range) as avg_elev_hrv
-        , count(daily_avg_hrv) over (partition by extract(year from workout_date), elev_gain_range) as num_runs_per_range
+        , min(daily_avg_hrv) over (partition by extract(year from workout_date), elev_gain_range) as min_daily_hrv_elev_range
+        , max(daily_avg_hrv) over (partition by extract(year from workout_date), elev_gain_range) as max_daily_hrv_elev_range
+        , avg(daily_avg_hrv) over (partition by extract(year from workout_date), elev_gain_range) as avg_daily_hrv_elev_range
+        , count(daily_avg_hrv) over (partition by extract(year from workout_date), elev_gain_range) as num_runs_in_range
     from ranges
     where daily_avg_hrv is not null
     order by year asc, elev_gain_range asc
 )
 
-select * from fina
+select * from final

@@ -2,7 +2,7 @@ version: 2
 
 models:
   - name: fct_hrv_consecutive
-    description: Model to analyze effect of consecutive running days on heart rate variability
+    description: Model to analyze effect of intervals of consecutive running days on heart rate variability
     columns:
       - name: year
         description: year
@@ -15,19 +15,22 @@ models:
           - dbt_utils.accepted_range:
               min_value: 1
               max_value: 7
-      - name: min_hrv_interval
+      - name: min_last_daily_avg_hrv
+        description: last_daily_avg_hrv is the last daily_avg_hrv value within each interval of consecutive days with the goal of capturing the maximum effect on HRV from the strain of the mileage during that interval. min_last_daily_avg_hrv is the minimum value of last_daily_avg_hrv partitioned by year and consecutive_days.
         tests:
           - not_null
           - dbt_utils.accepted_range:
               min_value: 0
               max_value: 150
-      - name: max_hrv_interval
+      - name: max_last_daily_avg_hrv
+        description: max_last_daily_avg_hrv is the maximum value of last_daily_avg_hrv partitioned by year and consecutive_days.
         tests:
           - not_null
           - dbt_utils.accepted_range:
               min_value: 0
               max_value: 150
-      - name: avg_hrv_interval
+      - name: avg_last_daily_avg_hrv
+        description: avg_last_daily_avg_hrv is the average value of last_daily_avg_hrv partitioned by year and consecutive_days.
         tests:
           - not_null
           - dbt_utils.accepted_range:
@@ -48,32 +51,35 @@ models:
         description: number corresponding to range of elevation gain for each run (0-100 ft = 1, 100-200 ft = 2, etc.)
         tests:
           - not_null
-      - name: min_elev_hrv
+          - dbt_utils.accepted_range:
+              min_value: 1
+              max_value: 6
+      - name: min_daily_hrv_elev_range
         description: minimum value for daily_avg_hrv partitioned by year and elevation gain range
         tests:
           - not_null
           - dbt_utils.accepted_range:
               min_value: 0
               max_value: 150
-      - name: max_elev_hrv
+      - name: max_daily_hrv_elev_range
         description: maximum value for daily_avg_hrv partitioned by year and elevation gain range
         tests:
           - not_null
           - dbt_utils.accepted_range:
               min_value: 0
               max_value: 150
-      - name: avg_elev_hrv
+      - name: avg_daily_hrv_elev_range
         description: average value for daily_avg_hrv partitioned by year and elevation gain range
         tests:
           - not_null
           - dbt_utils.accepted_range:
               min_value: 0
               max_value: 150
-      - name: num_runs_per_range
-        description: count of runs in each elevation range (e.g. 100 runs in 2023 within elevation range 5)
+      - name: num_runs_in_range
+        description: count of runs per year in each elevation range (e.g. 100 runs in 2023 within elevation range 5)
         tests:
           - not_null
-  - name: fct_hrv_mileage
+  - name: fct_hrv_weekly_mileage
     description: Model to analyze effect of weekly running mileage on heart rate variability
     columns:
       - name: year
@@ -81,9 +87,12 @@ models:
         tests:
           - not_null
       - name: mileage_range
-        description: number corresponding to range of weekly mileage range for each run (< 10 miles = 1, 10-20 miles = 2, etc.)
+        description: number corresponding to range of weekly mileage (< 10 miles = 1, 10-20 miles = 2, etc.)
         tests:
           - not_null
+          - dbt_utils.accepted_range:
+              min_value: 1
+              max_value: 5
       - name: min_last_daily_avg_hrv
         description: last_daily_avg_hrv is the last daily_avg_hrv value within each weekly interval (start_week) with the goal of capturing the maximum effect on HRV from the strain of each week's mileage. min_last_daily_avg_hrv is the minimum value of last_daily_avg_hrv partitioned by year and mileage_range.
         tests:
@@ -105,7 +114,64 @@ models:
           - dbt_utils.accepted_range:
               min_value: 0
               max_value: 150
-      - name: num_runs_per_range
-        description: count of runs in mileage range (e.g. 152 runs in 2023 were within weeks in mileage range 4 (30-40 miles per week))
+      - name: avg_daily_hrv_mileage_range
+        description: average of all daily average HRVs partitioned by year and mileage range i.e. overall average HRV per year per mileage range
         tests:
           - not_null
+          - dbt_utils.accepted_range:
+              min_value: 0
+              max_value: 150
+      - name: avg_yearly_hrv
+        description: average of all daily average HRVs partitioned by year i.e. yearly average HRV
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              min_value: 0
+              max_value: 150
+      - name: num_runs_in_range
+        description: count of runs per year in each mileage range (e.g. 152 runs in 2023 were within weeks in mileage range 4 (30-40 miles per week))
+        tests:
+          - not_null
+  - name: fct_hrv_daily_mileage
+    description: Model to analyze effect of weekly running mileage on heart rate variability
+    columns:
+      - name: year
+        description: year
+        tests:
+          - not_null
+      - name: mileage_range
+        description: number corresponding to range of daily mileage (e.g. 0-4 miles = 1, 4-5 miles = 2, etc.)
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              min_value: 1
+              max_value: 8
+      - name: min_daily_hrv_mileage_range
+        description: minimum value for daily_avg_hrv partitioned by year and mileage range
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              min_value: 0
+              max_value: 150
+      - name: max_daily_hrv_mileage_range
+        description: maximum value for daily_avg_hrv partitioned by year and mileage range
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              min_value: 0
+              max_value: 150
+      - name: avg_daily_hrv_mileage_range
+        description: average value for daily_avg_hrv partitioned by year and mileage range
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              min_value: 0
+              max_value: 150
+      - name: num_runs_in_range
+        description: count of runs per year in each mileage range (e.g. 141 runs in 2023 were within mileage range 6)
+        tests:
+          - not_null
+
+            
+
+        
