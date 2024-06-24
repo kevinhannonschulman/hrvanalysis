@@ -27,11 +27,11 @@ with tablejoin as (
         start_week
         , total_mileage
         , case
-            when total_mileage < 10 then 1
-            when total_mileage between 10 and 20 then 2
-            when total_mileage between 20 and 30 then 3
-            when total_mileage between 30 and 40 then 4
-            when total_mileage > 40 then 5 end as mileage_range
+            when total_mileage < 10 then '<10'
+            when total_mileage between 10 and 20 then '10-20'
+            when total_mileage between 20 and 30 then '20-30'
+            when total_mileage between 30 and 40 then '30-40'
+            when total_mileage > 40 then '> 40' end as mileage_range
         , daily_avg_hrv
         , last_daily_avg_hrv
    from weekly_mileage
