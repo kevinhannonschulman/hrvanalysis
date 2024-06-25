@@ -48,12 +48,9 @@ models:
         tests:
           - not_null
       - name: elev_gain_range
-        description: number corresponding to range of elevation gain for each run (0-100 ft = 1, 100-200 ft = 2, etc.)
+        description: elevation gain range in feet for each run
         tests:
           - not_null
-          - dbt_utils.accepted_range:
-              min_value: 1
-              max_value: 6
       - name: min_daily_hrv_elev_range
         description: minimum value for daily_avg_hrv partitioned by year and elevation gain range
         tests:
@@ -76,7 +73,7 @@ models:
               min_value: 0
               max_value: 150
       - name: num_runs_in_range
-        description: count of runs per year in each elevation range (e.g. 100 runs in 2023 within elevation range 5)
+        description: count of runs per year in each elevation range (e.g. 100 runs in 2023 between 400-500 feet of elevation gain)
         tests:
           - not_null
   - name: fct_hrv_weekly_mileage
@@ -87,12 +84,9 @@ models:
         tests:
           - not_null
       - name: mileage_range
-        description: number corresponding to range of weekly mileage (< 10 miles = 1, 10-20 miles = 2, etc.)
+        description: range of weekly mileage
         tests:
           - not_null
-          - dbt_utils.accepted_range:
-              min_value: 1
-              max_value: 5
       - name: min_last_daily_avg_hrv
         description: last_daily_avg_hrv is the last daily_avg_hrv value within each weekly interval (start_week) with the goal of capturing the maximum effect on HRV from the strain of each week's mileage. min_last_daily_avg_hrv is the minimum value of last_daily_avg_hrv partitioned by year and mileage_range.
         tests:
@@ -128,8 +122,8 @@ models:
           - dbt_utils.accepted_range:
               min_value: 0
               max_value: 150
-      - name: num_runs_in_range
-        description: count of runs per year in each mileage range (e.g. 152 runs in 2023 were within weeks in mileage range 4 (30-40 miles per week))
+      - name: num_interval_count
+        description: number of weeks per year in each mileage range (e.g. 31 weeks in 2023 with weekly mileage between 30-40 miles)
         tests:
           - not_null
   - name: fct_hrv_daily_mileage
@@ -140,12 +134,9 @@ models:
         tests:
           - not_null
       - name: mileage_range
-        description: number corresponding to range of daily mileage (e.g. 0-4 miles = 1, 4-5 miles = 2, etc.)
+        description: range of daily mileage
         tests:
           - not_null
-          - dbt_utils.accepted_range:
-              min_value: 1
-              max_value: 8
       - name: min_daily_hrv_mileage_range
         description: minimum value for daily_avg_hrv partitioned by year and mileage range
         tests:
@@ -168,7 +159,7 @@ models:
               min_value: 0
               max_value: 150
       - name: num_runs_in_range
-        description: count of runs per year in each mileage range (e.g. 141 runs in 2023 were within mileage range 6)
+        description: count of runs per year in each mileage range (e.g. 141 runs in 2023 were between 8-9 miles)
         tests:
           - not_null
 
