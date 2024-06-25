@@ -27,7 +27,7 @@ with tablejoin as (
         start_week
         , total_mileage
         , case
-            when total_mileage < 10 then '<10'
+            when total_mileage < 10 then '< 10'
             when total_mileage between 10 and 20 then '10-20'
             when total_mileage between 20 and 30 then '20-30'
             when total_mileage between 30 and 40 then '30-40'
