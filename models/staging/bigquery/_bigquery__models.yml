@@ -1,0 +1,38 @@
+version: 2
+
+models:
+  - name: stg_HRV_SDNN
+    description: heart rate variability data from Apple Watch Series 6 – standard deviation of interbeat intervals between normal heartbeats (ms)
+    columns:
+      - name: timestamp_eastern
+        description: timestamp in Eastern Time for each HRV reading
+        tests:
+          - not_null
+      - name: HRV_ms
+        description: heart rate variability value in milliseconds
+        tests:
+          - not_null
+      - name: daily_avg_hrv
+        description: average of all heart rate variability readings per day
+        tests:
+          - not_null
+  - name: stg_Strava_Data
+    description: Strava data extracted from the API
+    columns:
+      - name: workout_date
+        description: date of each run
+        tests:
+          - not_null
+      - name: miles
+        description: mileage for each run
+        tests:
+          - not_null
+      - name: minutes
+        description: number of minutes (moving time) per run
+        tests:
+          - not_null
+      - name: elevation_gain_ft
+        description: total elevation gain during each run measured in feet
+        tests:
+          - not_null
+          
