@@ -183,8 +183,8 @@ models:
           - dbt_utils.accepted_range:
               min_value: 0
               max_value: 150
-      - name: total_runs_in_range
-        description: number of runs in each range of consecutive days
+      - name: total_intervals_in_range
+        description: number of intervals in each range of consecutive days
         tests:
           - not_null
   - name: fct_hrv_elevation_boxwhisker
@@ -225,8 +225,8 @@ models:
           - dbt_utils.accepted_range:
               min_value: 0
               max_value: 150
-      - name: total_runs_in_range
-        description: number of runs in each range of weekly mileage
+      - name: total_weeks_in_range
+        description: number of weeks in each range of weekly mileage
         tests:
           - not_null
   - name: fct_hrv_daily_mileage_boxwhisker

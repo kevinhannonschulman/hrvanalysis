@@ -51,7 +51,7 @@ with tablejoin as (
         workout_date
         , consecutive_days
         , last_daily_avg_hrv
-        , count(workout_date) over (partition by consecutive_days) as total_runs_in_range
+        , count(workout_date) over (partition by consecutive_days) as total_intervals_in_range
     from hrv_consecutive_join
     order by workout_date desc
 )

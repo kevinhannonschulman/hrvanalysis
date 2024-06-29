@@ -41,7 +41,7 @@ with tablejoin as (
         start_week
         , mileage_range
         , last_daily_avg_hrv
-        , count(start_week) over (partition by mileage_range) as total_runs_in_range
+        , count(start_week) over (partition by mileage_range) as total_weeks_in_range
     from ranges
     order by start_week desc
 )
