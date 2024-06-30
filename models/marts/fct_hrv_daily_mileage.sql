@@ -20,16 +20,13 @@ with tablejoin as (
 )
 
 , final as (
-    select
-        distinct extract(year from workout_date) as year
+    select 
+        workout_date
         , mileage_range
-        , min(daily_avg_hrv) over (partition by extract(year from workout_date), mileage_range) as min_daily_hrv_mileage_range
-        , max(daily_avg_hrv) over (partition by extract(year from workout_date), mileage_range) as max_daily_hrv_mileage_range
-        , avg(daily_avg_hrv) over (partition by extract(year from workout_date), mileage_range) as avg_daily_hrv_mileage_range
-        , count(daily_avg_hrv) over (partition by extract(year from workout_date), mileage_range) as num_runs_in_range
+        , daily_avg_hrv
+        , count(workout_date) over (partition by mileage_range) as total_runs_in_range
     from ranges
-    where daily_avg_hrv is not null
-    order by year asc, mileage_range asc
+    order by workout_date desc
 )
 
 select * from final

@@ -24,7 +24,7 @@ with tablejoin as (
 
 , ranges as (
     select
-        start_week
+        distinct start_week
         , total_mileage
         , case
             when total_mileage < 10 then '0-10'
@@ -32,24 +32,18 @@ with tablejoin as (
             when total_mileage between 20 and 30 then '20-30'
             when total_mileage between 30 and 40 then '30-40'
             when total_mileage > 40 then '> 40' end as mileage_range
-        , daily_avg_hrv
         , last_daily_avg_hrv
    from weekly_mileage
 )
 
 , final as (
-    select
-        distinct extract(year from start_week) as year
+    select 
+        start_week
         , mileage_range
-        , min(last_daily_avg_hrv) over (partition by extract(year from start_week), mileage_range) as min_last_daily_avg_hrv
-        , max(last_daily_avg_hrv) over (partition by extract(year from start_week), mileage_range) as max_last_daily_avg_hrv
-        , avg(last_daily_avg_hrv) over (partition by extract(year from start_week), mileage_range) as avg_last_daily_avg_hrv
-        , avg(daily_avg_hrv) over (partition by extract(year from start_week), mileage_range) as avg_daily_hrv_mileage_range
-        , avg(daily_avg_hrv) over (partition by extract(year from start_week)) as avg_yearly_hrv
-        , count(distinct start_week) over (partition by extract(year from start_week), mileage_range) as num_interval_count
+        , last_daily_avg_hrv
+        , count(start_week) over (partition by mileage_range) as total_weeks_in_range
     from ranges
-    where daily_avg_hrv is not null
-    order by year asc, mileage_range asc
+    order by start_week desc
 )
 
 select * from final

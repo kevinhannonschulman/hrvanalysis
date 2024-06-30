@@ -47,15 +47,13 @@ with tablejoin as (
 )
 
 , final as (
-    select
-        distinct extract(year from interval_end) as year
+    select 
+        workout_date as interval_end
         , consecutive_days
-        , min(last_daily_avg_hrv) over (partition by extract(year from interval_end), consecutive_days) as min_last_daily_avg_hrv
-        , max(last_daily_avg_hrv) over (partition by extract(year from interval_end), consecutive_days) as max_last_daily_avg_hrv
-        , avg(last_daily_avg_hrv) over (partition by extract(year from interval_end), consecutive_days) as avg_last_daily_avg_hrv
-        , count(*) over (partition by extract(year from workout_date), consecutive_days) as num_interval_count
+        , last_daily_avg_hrv
+        , count(workout_date) over (partition by consecutive_days) as total_intervals_in_range
     from hrv_consecutive_join
-    order by year asc, consecutive_days asc
+    order by workout_date desc
 )
 
 select * from final

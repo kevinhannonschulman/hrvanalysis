@@ -1,11 +1,12 @@
 version: 2
 
 models:
+  
   - name: fct_hrv_consecutive
     description: Model to analyze effect of intervals of consecutive running days on heart rate variability
     columns:
-      - name: year
-        description: year
+      - name: interval_end
+        description: end date of each consecutive interval
         tests:
           - not_null
       - name: consecutive_days
@@ -15,154 +16,77 @@ models:
           - dbt_utils.accepted_range:
               min_value: 1
               max_value: 7
-      - name: min_last_daily_avg_hrv
-        description: last_daily_avg_hrv is the last daily_avg_hrv value within each interval of consecutive days with the goal of capturing the maximum effect on HRV from the strain of the mileage during that interval. min_last_daily_avg_hrv is the minimum value of last_daily_avg_hrv partitioned by year and consecutive_days.
+      - name: last_daily_avg_hrv
+        description: last_daily_avg_hrv is the last daily_avg_hrv value within each interval of consecutive days with the goal of capturing the maximum effect on HRV from the strain of the mileage during that interval
         tests:
           - not_null
           - dbt_utils.accepted_range:
               min_value: 0
               max_value: 150
-      - name: max_last_daily_avg_hrv
-        description: max_last_daily_avg_hrv is the maximum value of last_daily_avg_hrv partitioned by year and consecutive_days.
-        tests:
-          - not_null
-          - dbt_utils.accepted_range:
-              min_value: 0
-              max_value: 150
-      - name: avg_last_daily_avg_hrv
-        description: avg_last_daily_avg_hrv is the average value of last_daily_avg_hrv partitioned by year and consecutive_days.
-        tests:
-          - not_null
-          - dbt_utils.accepted_range:
-              min_value: 0
-              max_value: 150
-      - name: num_interval_count
-        description: count of each interval group per year (e.g. 46 groups of 3 consecutive runs in 2023)
+      - name: total_intervals_in_range
+        description: number of intervals in each range of consecutive days
         tests:
           - not_null
   - name: fct_hrv_elevation
     description: Model to analyze effect of elevation gain during a run on heart rate variability
     columns:
-      - name: year
-        description: year
+      - name: workout_date
+        description: date of run
         tests:
           - not_null
       - name: elev_gain_range
         description: elevation gain range in feet for each run
         tests:
           - not_null
-      - name: min_daily_hrv_elev_range
-        description: minimum value for daily_avg_hrv partitioned by year and elevation gain range
+      - name: daily_avg_hrv
+        description: daily average HRV is the average of HRV values for each day containing a run on Strava
         tests:
-          - not_null
           - dbt_utils.accepted_range:
               min_value: 0
               max_value: 150
-      - name: max_daily_hrv_elev_range
-        description: maximum value for daily_avg_hrv partitioned by year and elevation gain range
-        tests:
-          - not_null
-          - dbt_utils.accepted_range:
-              min_value: 0
-              max_value: 150
-      - name: avg_daily_hrv_elev_range
-        description: average value for daily_avg_hrv partitioned by year and elevation gain range
-        tests:
-          - not_null
-          - dbt_utils.accepted_range:
-              min_value: 0
-              max_value: 150
-      - name: num_runs_in_range
-        description: count of runs per year in each elevation range (e.g. 100 runs in 2023 between 400-500 feet of elevation gain)
+      - name: total_runs_in_range
+        description: number of runs in each range of elevation gain
         tests:
           - not_null
   - name: fct_hrv_weekly_mileage
     description: Model to analyze effect of weekly running mileage on heart rate variability
     columns:
-      - name: year
-        description: year
+      - name: start_week
+        description: date of the start of each week
         tests:
           - not_null
       - name: mileage_range
         description: range of weekly mileage
         tests:
           - not_null
-      - name: min_last_daily_avg_hrv
-        description: last_daily_avg_hrv is the last daily_avg_hrv value within each weekly interval (start_week) with the goal of capturing the maximum effect on HRV from the strain of each week's mileage. min_last_daily_avg_hrv is the minimum value of last_daily_avg_hrv partitioned by year and mileage_range.
+      - name: last_daily_avg_hrv
+        description: last_daily_avg_hrv is the last daily_avg_hrv value within each weekly interval (start_week) with the goal of capturing the maximum effect on HRV from the strain of the mileage during that interval
         tests:
-          - not_null
           - dbt_utils.accepted_range:
               min_value: 0
               max_value: 150
-      - name: max_last_daily_avg_hrv
-        description: max_last_daily_avg_hrv is the maximum value of last_daily_avg_hrv partitioned by year and mileage_range.
-        tests:
-          - not_null
-          - dbt_utils.accepted_range:
-              min_value: 0
-              max_value: 150
-      - name: avg_last_daily_avg_hrv
-        description: avg_last_daily_avg_hrv is the average value of last_daily_avg_hrv partitioned by year and mileage_range.
-        tests:
-          - not_null
-          - dbt_utils.accepted_range:
-              min_value: 0
-              max_value: 150
-      - name: avg_daily_hrv_mileage_range
-        description: average of all daily average HRVs partitioned by year and mileage range i.e. overall average HRV per year per mileage range
-        tests:
-          - not_null
-          - dbt_utils.accepted_range:
-              min_value: 0
-              max_value: 150
-      - name: avg_yearly_hrv
-        description: average of all daily average HRVs partitioned by year i.e. yearly average HRV
-        tests:
-          - not_null
-          - dbt_utils.accepted_range:
-              min_value: 0
-              max_value: 150
-      - name: num_interval_count
-        description: number of weeks per year in each mileage range (e.g. 31 weeks in 2023 with weekly mileage between 30-40 miles)
+      - name: total_weeks_in_range
+        description: number of weeks in each range of weekly mileage
         tests:
           - not_null
   - name: fct_hrv_daily_mileage
-    description: Model to analyze effect of weekly running mileage on heart rate variability
+    description: Model to analyze effect of daily running mileage on heart rate variability
     columns:
-      - name: year
-        description: year
+      - name: workout_date
+        description: date of run
         tests:
           - not_null
       - name: mileage_range
         description: range of daily mileage
         tests:
           - not_null
-      - name: min_daily_hrv_mileage_range
-        description: minimum value for daily_avg_hrv partitioned by year and mileage range
+      - name: daily_avg_hrv
+        description: daily average HRV is the average of HRV values for each day containing a run on Strava
         tests:
-          - not_null
           - dbt_utils.accepted_range:
               min_value: 0
               max_value: 150
-      - name: max_daily_hrv_mileage_range
-        description: maximum value for daily_avg_hrv partitioned by year and mileage range
+      - name: total_runs_in_range
+        description: number of runs in each range of daily mileage
         tests:
           - not_null
-          - dbt_utils.accepted_range:
-              min_value: 0
-              max_value: 150
-      - name: avg_daily_hrv_mileage_range
-        description: average value for daily_avg_hrv partitioned by year and mileage range
-        tests:
-          - not_null
-          - dbt_utils.accepted_range:
-              min_value: 0
-              max_value: 150
-      - name: num_runs_in_range
-        description: count of runs per year in each mileage range (e.g. 141 runs in 2023 were between 8-9 miles)
-        tests:
-          - not_null
-
-            
-
-        
