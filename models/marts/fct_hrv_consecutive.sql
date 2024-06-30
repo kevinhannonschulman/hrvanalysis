@@ -48,7 +48,7 @@ with tablejoin as (
 
 , final as (
     select 
-        workout_date
+        workout_date as interval_end
         , consecutive_days
         , last_daily_avg_hrv
         , count(workout_date) over (partition by consecutive_days) as total_intervals_in_range

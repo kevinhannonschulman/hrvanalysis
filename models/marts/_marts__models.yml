@@ -5,8 +5,8 @@ models:
   - name: fct_hrv_consecutive
     description: Model to analyze effect of intervals of consecutive running days on heart rate variability
     columns:
-      - name: workout_date
-        description: date of run
+      - name: interval_end
+        description: end date of each consecutive interval
         tests:
           - not_null
       - name: consecutive_days
