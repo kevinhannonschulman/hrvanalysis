@@ -1,6 +1,6 @@
 ## How Does Running Strain Affect Heart Rate Variability? ##
 
-Track and field is a sport of many numbers – distances, splits, personal bests, Olympic standards and world records. However, just as important are the health metrics that can help guide a runner to become their (actual) personal best. Heart rate variability (HRV), the measure of the variation in time between heartbeats as measured in milliseconds, is one of those metrics that can be a useful indicator of stress and recovery. As a result, I was interested in exploring how different quantities of four metrics of running strain (daily mileage, daily elevation gain, consecutive days and weekly mileage) affected HRV so I built data models in dbt using my own Strava and HRV data and visualized the results in a Sigma dashboard to analyze the results.
+Track and field is a sport of many numbers – distances, splits, personal bests, Olympic standards and world records. However, just as important are the health metrics that can help guide a runner to become their (actual) personal best. Heart rate variability (HRV), the measure of the variation in time between heartbeats as measured in milliseconds, is one of those metrics that can be a useful indicator of stress and recovery. As a result, I was interested in exploring how different quantities of four metrics of running strain (daily mileage, daily elevation gain, consecutive days and weekly mileage) affected HRV so I built data models in dbt using my own Strava and HRV data and visualized the results in a Sigma dashboard.
 
 ### Methodology ###
 
